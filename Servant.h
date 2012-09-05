@@ -13,16 +13,20 @@ public:
 	static auto Create(boost::asio::io_service& service, 
 			int port, int buffer_size, std::ostream& os) -> Pointer {
 		auto servant = Pointer(new Servant(os));
-		auto core = nr::ntw::P2pCore::Create(service, port, buffer_size,
+		auto server = nr::ntw::Server::Create(service, port, buffer_size,
 			boost::bind(&Servant::OnAccept, servant, _1),
 			boost::bind(&Servant::OnReceive, servant, _1, _2),
 			boost::bind(&Servant::OnClose, servant, _1), os);
-		servant->SetCorePtr(core);
+		servant->SetServerPtr(server);
 		return servant;
 	}
 
 	auto Register(Logger logger) -> void {
 		this->logger_list.push_back(logger);
+	}
+
+	auto StartAccept() -> void {
+		this->server->StartAccept();	
 	}
 
 private:
@@ -37,7 +41,7 @@ private:
 		}
 	}
 	
-	auto SetCorePtr(nr::ntw::P2pCore::Pointer core) -> void { this->core = core; }
+	auto SetServerPtr(nr::ntw::Server::Pointer server) -> void { this->server = server; }
 
 	auto OnAccept(nr::ntw::Session::Pointer session) -> void {
 		this->pool->Add(session);
@@ -47,7 +51,7 @@ private:
 		this->pool->Erase(session);	
 	}
 
-	nr::ntw::P2pCore::Pointer core;
+	nr::ntw::Server::Pointer server;
 	nr::ntw::SessionPool::Pointer pool;
 	std::vector<Logger> logger_list;
 	std::ostream& os;

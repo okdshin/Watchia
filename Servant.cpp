@@ -7,8 +7,10 @@ using namespace wch;
 int main(int argc, char* argv[])
 {
 	boost::asio::io_service service;
+	boost::asio::io_service::work w(service);
 	boost::thread t(boost::bind(&boost::asio::io_service::run, &service));
-	Servant::Create(service, 54321, 128, std::cout);
+	auto servent = Servant::Create(service, 54321, 128, std::cout);
+	servent->StartAccept();
 	t.join();
 
     return 0;
