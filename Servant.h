@@ -4,7 +4,7 @@
 #include <boost/asio.hpp>
 #include "neuria/Neuria.h"
 
-namespace svy
+namespace wch
 {
 class Servant{
 public:

@@ -2,7 +2,7 @@
 #include "Servant.h"
 #include <iostream>
 
-using namespace svy;
+using namespace wch;
 
 int main(int argc, char* argv[])
 {
